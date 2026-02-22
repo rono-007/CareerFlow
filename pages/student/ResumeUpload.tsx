@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { UploadCloud, CheckCircle2, Loader2, ArrowRight, FileText, Sparkles, Zap, Target } from 'lucide-react';
+import { UploadCloud, CheckCircle2, Loader2, ArrowRight, FileText, Sparkles, Zap, Target, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const API_URL = "http://localhost:8000";
 
@@ -10,7 +11,22 @@ const ResumeUpload: React.FC = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [step, setStep] = useState<'idle' | 'uploading' | 'analyzing' | 'complete' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState("");
+  const [hasExistingAnalysis, setHasExistingAnalysis] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const stored = localStorage.getItem('analysisResult');
+    if (stored) {
+      setHasExistingAnalysis(true);
+    }
+  }, []);
+
+  const handleClearAnalysis = () => {
+    if (window.confirm("This will clear your previous analysis. Are you sure you want to start fresh?")) {
+      localStorage.removeItem('analysisResult');
+      setHasExistingAnalysis(false);
+    }
+  };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -155,6 +171,36 @@ const ResumeUpload: React.FC = () => {
             Our AI agents analyze your skills, identify gaps, and provide actionable recommendations.
           </p>
         </div>
+
+        {/* Existing Analysis Alert */}
+        {hasExistingAnalysis && (
+          <div className="mb-8 p-4 bg-sage-50 border border-sage-100 rounded-2xl flex items-center justify-between max-w-2xl mx-auto">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                <FileText size={20} className="text-sage-600" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-medium text-stone-800">Existing Analysis Found</p>
+                <p className="text-xs text-stone-500">Your previous results are currently saved and persistent.</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => navigate('/student/dashboard')}
+                className="px-4 py-2 text-xs font-medium text-sage-700 hover:bg-sage-100/50 rounded-lg transition-colors"
+              >
+                View Results
+              </button>
+              <button
+                onClick={handleClearAnalysis}
+                className="px-4 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 rounded-lg transition-colors flex items-center gap-2"
+              >
+                <Trash2 size={12} />
+                Start Fresh
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Main Content - Two Column Layout */}
         <div className="grid md:grid-cols-2 gap-6">

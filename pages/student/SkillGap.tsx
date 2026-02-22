@@ -2,47 +2,6 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, AlertCircle, CheckCircle2, TrendingUp } from 'lucide-react';
 import { Skill, SkillStatus } from '../../types';
 
-const mockSkills: Skill[] = [
-    {
-        name: "React.js",
-        status: SkillStatus.STRONG,
-        category: "Technical",
-        reasoning: "You have 3+ years experience listed in 2 major projects.",
-        context: "Experience: Senior Frontend Dev at TechCorp",
-        improvementTip: "Consider contributing to open source React libraries to stand out further."
-    },
-    {
-        name: "User Research",
-        status: SkillStatus.STRONG,
-        category: "Domain",
-        reasoning: "Mentioned conducting interviews in your side project.",
-        context: "Projects: Community App",
-    },
-    {
-        name: "Data Analysis (SQL)",
-        status: SkillStatus.DEVELOPING,
-        category: "Technical",
-        reasoning: "Keyword present, but no specific projects or complexity level described.",
-        context: "Skills Section",
-        improvementTip: "Add a bullet point about a complex query you wrote to solve a business problem."
-    },
-    {
-        name: "Stakeholder Mgmt",
-        status: SkillStatus.MISSING,
-        category: "Soft",
-        reasoning: "Crucial for PM roles. No explicit mention of cross-functional collaboration.",
-        context: "Missing entirely",
-        improvementTip: "Reflect on times you managed conflicting priorities between teams and add that narrative."
-    },
-    {
-        name: "A/B Testing",
-        status: SkillStatus.MISSING,
-        category: "Domain",
-        reasoning: "Standard requirement for growth roles.",
-        context: "Missing entirely",
-        improvementTip: "If you haven't done this, take a short course on Optimizely or Google Optimize principles."
-    }
-];
 
 const SkillChip: React.FC<{ skill: Skill }> = ({ skill }) => {
     const [showTooltip, setShowTooltip] = useState(false);
@@ -90,6 +49,7 @@ const SkillChip: React.FC<{ skill: Skill }> = ({ skill }) => {
 const SkillGap: React.FC = () => {
     const [skills, setSkills] = React.useState<Skill[]>([]);
     const [score, setScore] = React.useState(0);
+    const [hasAnalysis, setHasAnalysis] = React.useState(false);
     const [loaded, setLoaded] = React.useState(false);
 
     React.useEffect(() => {
@@ -97,6 +57,7 @@ const SkillGap: React.FC = () => {
         if (stored) {
             try {
                 const data = JSON.parse(stored);
+                setHasAnalysis(true);
                 // Map backend skill format to frontend Skill type
                 const mappedSkills: Skill[] = (data.skills || []).map((s: any) => ({
                     name: s.name,
@@ -108,20 +69,31 @@ const SkillGap: React.FC = () => {
                     context: s.context || '',
                     improvementTip: s.improvementTip || ''
                 }));
-                setSkills(mappedSkills.length > 0 ? mappedSkills : mockSkills);
+                setSkills(mappedSkills);
                 setScore(data.readinessScore || 0);
             } catch (e) {
                 console.error("Failed to parse analysis result", e);
-                setSkills(mockSkills);
             }
-        } else {
-            setSkills(mockSkills);
         }
         setLoaded(true);
     }, []);
 
-    const displaySkills = skills.length > 0 ? skills : mockSkills;
-    const displayScore = score > 0 ? score : 65;
+    if (loaded && !hasAnalysis) {
+        return (
+            <div className="fade-in max-w-5xl mx-auto py-20 text-center">
+                <div className="w-20 h-20 bg-stone-100 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                    <AlertCircle size={40} className="text-stone-300" />
+                </div>
+                <h1 className="text-3xl font-light text-stone-800 mb-4">No Skill Gap Analysis</h1>
+                <p className="text-stone-500 max-w-md mx-auto mb-8">
+                    Upload your resume to see a detailed comparison of your skills against industry standards.
+                </p>
+                <a href="#/student/upload" className="inline-flex items-center gap-2 px-8 py-3 bg-stone-900 text-white rounded-full font-medium hover:bg-stone-800 transition-all shadow-lg hover:shadow-xl hover:scale-105">
+                    Upload Resume
+                </a>
+            </div>
+        );
+    }
 
     return (
         <div className="fade-in max-w-5xl mx-auto">
@@ -134,10 +106,10 @@ const SkillGap: React.FC = () => {
             <div className="mb-12">
                 <div className="flex justify-between text-sm mb-2 font-medium text-stone-600">
                     <span>Resume Alignment</span>
-                    <span>{displayScore}% Match</span>
+                    <span>{score}% Match</span>
                 </div>
                 <div className="w-full h-2 bg-stone-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-stone-800 rounded-full transition-all duration-1000" style={{ width: `${displayScore}%` }}></div>
+                    <div className="h-full bg-stone-800 rounded-full transition-all duration-1000" style={{ width: `${score}%` }}></div>
                 </div>
             </div>
 
@@ -148,14 +120,14 @@ const SkillGap: React.FC = () => {
                         <div className="w-3 h-3 rounded-full bg-sage-500"></div>
                         <h3 className="font-semibold text-stone-800 text-lg">Confident Skills</h3>
                         <span className="ml-auto text-sm text-sage-600 bg-sage-50 px-2 py-0.5 rounded-full">
-                            {displaySkills.filter(s => s.status === SkillStatus.STRONG).length}
+                            {skills.filter(s => s.status === SkillStatus.STRONG).length}
                         </span>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        {displaySkills.filter(s => s.status === SkillStatus.STRONG).map((skill, idx) => (
+                        {skills.filter(s => s.status === SkillStatus.STRONG).map((skill, idx) => (
                             <SkillChip key={idx} skill={skill} />
                         ))}
-                        {displaySkills.filter(s => s.status === SkillStatus.STRONG).length === 0 && (
+                        {skills.filter(s => s.status === SkillStatus.STRONG).length === 0 && (
                             <p className="text-sm text-stone-400 italic py-4 w-full text-center">No strong matches found.</p>
                         )}
                     </div>
@@ -167,14 +139,14 @@ const SkillGap: React.FC = () => {
                         <div className="w-3 h-3 rounded-full bg-rose-500"></div>
                         <h3 className="font-semibold text-stone-800 text-lg">Skills to Build</h3>
                         <span className="ml-auto text-sm text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">
-                            {displaySkills.filter(s => s.status === SkillStatus.MISSING).length}
+                            {skills.filter(s => s.status === SkillStatus.MISSING).length}
                         </span>
                     </div>
                     <div className="flex flex-wrap gap-2">
-                        {displaySkills.filter(s => s.status === SkillStatus.MISSING).map((skill, idx) => (
+                        {skills.filter(s => s.status === SkillStatus.MISSING).map((skill, idx) => (
                             <SkillChip key={idx} skill={skill} />
                         ))}
-                        {displaySkills.filter(s => s.status === SkillStatus.MISSING).length === 0 && (
+                        {skills.filter(s => s.status === SkillStatus.MISSING).length === 0 && (
                             <p className="text-sm text-stone-400 italic py-4 w-full text-center">No gaps detected. Great job!</p>
                         )}
                     </div>

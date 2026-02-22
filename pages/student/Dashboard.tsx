@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, TrendingUp, FileText, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
+import { ArrowRight, TrendingUp, FileText, CheckCircle2, AlertCircle, Clock, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
@@ -29,12 +29,19 @@ const StudentDashboard: React.FC = () => {
         return () => clearTimeout(timer);
     }, []);
 
-    // Extract data from analysis or use defaults
-    const readinessScore = analysis?.readinessScore || 78;
-    const strengths = analysis?.skills?.filter((s: any) => s.status === 'Strong').map((s: any) => s.name) || ['User Research', 'Agile Methodologies', 'Figma', 'React Basics'];
-    const toBuild = analysis?.skills?.filter((s: any) => s.status === 'Missing' || s.status === 'To Build').map((s: any) => s.name) || ['SQL for Analytics', 'System Design'];
-    const verdict = analysis?.agent2_output?.final_verdict || 'On Track';
-    const mainGap = toBuild[0] || 'Technical Depth';
+    const handleDeleteResume = () => {
+        if (window.confirm("Are you sure you want to delete this resume analysis? This action cannot be undone.")) {
+            localStorage.removeItem('analysisResult');
+            setAnalysis(null);
+        }
+    };
+
+    // Extract data from analysis or use null/empty fallbacks
+    const readinessScore = analysis?.readinessScore || 0;
+    const strengths = analysis?.skills?.filter((s: any) => s.status === 'Strong').map((s: any) => s.name) || [];
+    const toBuild = analysis?.skills?.filter((s: any) => s.status === 'Missing' || s.status === 'To Build').map((s: any) => s.name) || [];
+    const verdict = analysis?.agent2_output?.final_verdict || 'Pending';
+    const mainGap = toBuild[0] || 'N/A';
     const topStrengths = strengths.slice(0, 2);
 
     const radius = 56;
@@ -99,7 +106,9 @@ const StudentDashboard: React.FC = () => {
                         </div>
 
                         <div className="flex-1 w-full">
-                            <h2 className="text-xl font-medium text-stone-800 mb-2">{readinessScore >= 70 ? "You're on track!" : readinessScore >= 40 ? "Getting there!" : "Let's get started!"}</h2>
+                            <h2 className="text-xl font-medium text-stone-800 mb-2">
+                                {analysis ? (readinessScore >= 70 ? "You're on track!" : readinessScore >= 40 ? "Getting there!" : "Let's get started!") : "Ready to start?"}
+                            </h2>
                             <p className="text-stone-500 leading-relaxed mb-6">
                                 {analysis ? (
                                     <>
@@ -115,13 +124,13 @@ const StudentDashboard: React.FC = () => {
                                         )}
                                     </>
                                 ) : (
-                                    <>Upload your resume to see personalized insights and skill gap analysis.</>
+                                    <>Upload your resume to get an AI-powered analysis of your skills and career readiness score.</>
                                 )}
                             </p>
                             <div className="flex gap-4">
                                 <div className="px-4 py-2 bg-sage-50 rounded-xl border border-sage-100">
                                     <span className="block text-xs text-sage-600 uppercase font-bold tracking-wider mb-1">Confidence</span>
-                                    <span className="text-sage-700 font-medium">{readinessScore >= 70 ? 'High' : readinessScore >= 40 ? 'Moderate' : 'Low'}</span>
+                                    <span className="text-sage-700 font-medium">{analysis ? (readinessScore >= 70 ? 'High' : readinessScore >= 40 ? 'Moderate' : 'Low') : '—'}</span>
                                 </div>
                                 <div className="px-4 py-2 bg-stone-50 rounded-xl border border-stone-100">
                                     <span className="block text-xs text-stone-500 uppercase font-bold tracking-wider mb-1">Gap</span>
@@ -174,7 +183,7 @@ const StudentDashboard: React.FC = () => {
                         </h3>
 
                         <ul className="relative z-10 space-y-4">
-                            {(analysis?.actions && analysis.actions.length > 0 ? analysis.actions : [
+                            {analysis ? (analysis?.actions && analysis.actions.length > 0 ? analysis.actions : [
                                 { title: "Quantify Project Alpha", details: "Add specific metrics to bullet points 2 & 3.", priority: "High" },
                                 { title: "SQL Certification", details: "Complete a basic course to clear the 'Missing' tag.", priority: "Medium" },
                                 { title: "Tailor your summary", details: "Update your professional summary to match job requirements.", priority: "Low" }
@@ -190,7 +199,12 @@ const StudentDashboard: React.FC = () => {
                                         </div>
                                     </div>
                                 </li>
-                            ))}
+                            )) : (
+                                <li className="bg-stone-800/20 p-6 rounded-2xl border border-stone-800 text-center">
+                                    <Sparkles className="mx-auto text-sage-500/50 mb-3" size={32} />
+                                    <p className="text-sm text-stone-400">Get a personalized improvement plan after your first analysis.</p>
+                                </li>
+                            )}
                         </ul>
 
                         <Link
@@ -216,30 +230,30 @@ const StudentDashboard: React.FC = () => {
                             <div>
                                 <div className="flex justify-between text-xs mb-2">
                                     <span className="text-stone-500">Structure Clarity</span>
-                                    <span className="text-stone-800 font-medium">Excellent</span>
+                                    <span className="text-stone-800 font-medium">{analysis ? 'Excellent' : '—'}</span>
                                 </div>
-                                <div className="h-1.5 w-full bg-stone-100 rounded-full">
-                                    <div className="h-full bg-sage-500 w-[95%] rounded-full"></div>
+                                <div className="h-1.5 w-full bg-stone-100 rounded-full overflow-hidden">
+                                    <div className="h-full bg-sage-500 transition-all duration-1000" style={{ width: analysis ? '95%' : '0%' }}></div>
                                 </div>
                             </div>
                             <div>
                                 <div className="flex justify-between text-xs mb-2">
                                     <span className="text-stone-500">Keyword Alignment</span>
-                                    <span className="text-stone-800 font-medium">Good</span>
+                                    <span className="text-stone-800 font-medium">{analysis ? 'Good' : '—'}</span>
                                 </div>
-                                <div className="h-1.5 w-full bg-stone-100 rounded-full">
-                                    <div className="h-full bg-sage-500 w-[75%] rounded-full"></div>
+                                <div className="h-1.5 w-full bg-stone-100 rounded-full overflow-hidden">
+                                    <div className="h-full bg-sage-500 transition-all duration-1000" style={{ width: analysis ? '75%' : '0%' }}></div>
                                 </div>
                             </div>
                             <div>
                                 <div className="flex justify-between text-xs mb-2">
                                     <span className="text-stone-500">Impact Metrics</span>
-                                    <span className="text-amber-600 font-medium">Needs Work</span>
+                                    <span className="text-stone-800 font-medium">{analysis ? 'Needs Work' : '—'}</span>
                                 </div>
-                                <div className="h-1.5 w-full bg-stone-100 rounded-full">
-                                    <div className="h-full bg-amber-400 w-[40%] rounded-full"></div>
+                                <div className="h-1.5 w-full bg-stone-100 rounded-full overflow-hidden">
+                                    <div className="h-full bg-amber-400 transition-all duration-1000" style={{ width: analysis ? '40%' : '0%' }}></div>
                                 </div>
-                                <p className="text-xs text-stone-400 mt-2">Try adding ROI % to your last project.</p>
+                                {analysis && <p className="text-xs text-stone-400 mt-2">Try adding ROI % to your last project.</p>}
                             </div>
                         </div>
                     </div>
@@ -277,6 +291,14 @@ const StudentDashboard: React.FC = () => {
                                         {analysis?.agent2_output?.final_verdict || 'Pending'}
                                     </p>
                                 </div>
+
+                                <button
+                                    onClick={handleDeleteResume}
+                                    className="w-full mt-4 py-2 px-4 border border-rose-200 text-rose-600 rounded-xl text-xs font-medium hover:bg-rose-50 transition-colors flex items-center justify-center gap-2"
+                                >
+                                    <AlertCircle size={14} />
+                                    Delete this Resume
+                                </button>
                             </div>
                         ) : (
                             <div className="text-center py-8">
