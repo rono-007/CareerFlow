@@ -16,14 +16,8 @@ import {
   TrendingUp
 } from 'lucide-react';
 
-const GrainOverlay = () => (
-  <div className="fixed inset-0 z-[9999] pointer-events-none opacity-[0.08] mix-blend-multiply transition-opacity duration-700">
-    <div className="absolute inset-[-200%] bg-[url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZmlsdGVyIGlkPSJub2lzZUZpbHRlciI+CiAgICA8ZmVUdXJidWxlbmNlIAogICAgICB0eXBlPSJmcmFjdGFsTm9pc2UiIAogICAgICBiYXNlRnJlcXVlbmN5PSIwLjY1IiAKICAgICAgbnVtT2N0YXZlcz0iMyIgCiAgICAgIHN0aWNoVGlsZXM9InN0aWNoIi8+CiAgPC9maWx0ZXI+CiAgCiAgPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI25vaXNlRmlsdGVyKSIvPgo8L3N2Zz4=')] animate-grain contrast-[1.5]"></div>
-  </div>
-);
-
 const DotPattern = () => (
-  <div className="absolute inset-0 -z-10 h-full w-full bg-stone-50/50 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+  <div className="absolute inset-0 -z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
 );
 
 const Navbar = () => {
@@ -415,7 +409,7 @@ const Footer = () => (
 
 const Landing: React.FC = () => {
   return (
-    <div className="bg-stone-50 min-h-screen font-sans text-stone-900 selection:bg-sage-100 overflow-x-hidden relative">
+    <div className="bg-white min-h-screen font-sans text-stone-900 selection:bg-sage-100 overflow-x-hidden relative">
       {/* Inject Keyframe Styles for animations */}
       <style>{`
           @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
@@ -436,24 +430,10 @@ const Landing: React.FC = () => {
             0%, 100% { transform: translateY(0px) rotate(var(--tw-rotate, 0deg)); }
             50% { transform: translateY(-12px) rotate(var(--tw-rotate, 0deg)); }
           }
-          @keyframes grain {
-            0%, 100% { transform: translate(0, 0); }
-            10% { transform: translate(-5%, -10%); }
-            20% { transform: translate(-15%, 5%); }
-            30% { transform: translate(7%, -25%); }
-            40% { transform: translate(-5%, 25%); }
-            50% { transform: translate(-15%, 10%); }
-            60% { transform: translate(15%, 0%); }
-            70% { transform: translate(0%, 15%); }
-            80% { transform: translate(3%, 35%); }
-            90% { transform: translate(-10%, 10%); }
-          }
           .animate-float { animation: float 4s ease-in-out infinite; }
           .animate-float-delayed { animation: float-delayed 5s ease-in-out infinite; }
           .animate-float-slow { animation: float-slow 6s ease-in-out infinite; }
-          .animate-grain { animation: grain 8s steps(10) infinite; }
        `}</style>
-      <GrainOverlay />
       <Navbar />
       <Hero />
       <Features />
