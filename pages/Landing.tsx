@@ -227,11 +227,6 @@ const Hero = () => {
           </Link>
         </div>
 
-        {/* Subtle scroll hint */}
-        <div className="absolute bottom-[-15%] left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-bounce opacity-20">
-          <span className="text-[10px] font-bold font-mono tracking-widest uppercase">Scroll to explore</span>
-          <div className="w-px h-8 bg-stone-900"></div>
-        </div>
       </div>
     </section>
   );
