@@ -43,9 +43,9 @@ const Navbar = () => {
 
         {/* Desktop CTAs */}
         <div className="hidden md:flex items-center gap-2">
-          <Link to="/student/dashboard" className="px-5 py-2.5 text-sm font-medium text-stone-600 hover:text-stone-900 hover:bg-stone-100/50 rounded-full transition-all">Sign in</Link>
+          <Link to="/auth" className="px-5 py-2.5 text-sm font-medium text-stone-600 hover:text-stone-900 hover:bg-stone-100/50 rounded-full transition-all">Sign in</Link>
           <Link
-            to="/student/dashboard"
+            to="/auth"
             className="px-6 py-2.5 bg-stone-900 text-white text-sm font-medium rounded-full hover:bg-stone-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-95"
           >
             Get Started
@@ -67,8 +67,8 @@ const Navbar = () => {
             <Link to="/recruiter/dashboard" className="hover:text-stone-900" onClick={() => setIsOpen(false)}>For Recruiters</Link>
             <Link to="/admin/fairness" className="hover:text-stone-900" onClick={() => setIsOpen(false)}>Fairness AI</Link>
             <hr className="border-stone-200/50 my-2" />
-            <Link to="/student/dashboard" className="text-stone-900" onClick={() => setIsOpen(false)}>Sign in</Link>
-            <Link to="/student/dashboard" className="bg-stone-900 text-white px-4 py-3 rounded-2xl shadow-lg" onClick={() => setIsOpen(false)}>Get Started</Link>
+            <Link to="/auth" className="text-stone-900" onClick={() => setIsOpen(false)}>Sign in</Link>
+            <Link to="/auth" className="bg-stone-900 text-white px-4 py-3 rounded-2xl shadow-lg" onClick={() => setIsOpen(false)}>Get Started</Link>
           </div>
         </div>
       )}
@@ -213,14 +213,14 @@ const Hero = () => {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
           <Link
-            to="/student/dashboard"
+            to="/auth"
             className="w-full sm:w-auto px-10 py-5 bg-stone-900 text-white rounded-2xl font-serif text-xl hover:bg-stone-800 transition-all shadow-2xl hover:shadow-stone-200 hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3 group"
           >
             I'm a Student
             <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
           </Link>
           <Link
-            to="/recruiter/dashboard"
+            to="/auth"
             className="w-full sm:w-auto px-10 py-5 bg-white text-stone-700 border border-stone-200 rounded-2xl font-serif text-xl hover:bg-stone-50 hover:border-stone-300 transition-all shadow-sm hover:shadow-md hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2"
           >
             I'm a Recruiter

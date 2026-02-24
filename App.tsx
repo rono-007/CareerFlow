@@ -20,22 +20,23 @@ import CandidateDetail from './pages/recruiter/CandidateDetail';
 // Admin Pages
 import AdminOverview from './pages/admin/Overview';
 import FairnessBias from './pages/admin/Fairness';
+import AuthPage from './pages/AuthPage';
 
 const Navigation = () => {
   const location = useLocation();
   const isLanding = location.pathname === '/';
-  
-  if (isLanding) return null;
+  const isAuth = location.pathname === '/auth';
+
+  if (isLanding || isAuth) return null;
 
   const isStudent = location.pathname.includes('/student');
   const isRecruiter = location.pathname.includes('/recruiter');
   const isAdmin = location.pathname.includes('/admin');
 
-  const navClass = (isActive: boolean) => 
-    `flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 text-sm font-medium ${
-      isActive 
-        ? 'bg-stone-800 text-white shadow-sm' 
-        : 'text-stone-500 hover:bg-stone-200 hover:text-stone-800'
+  const navClass = (isActive: boolean) =>
+    `flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 text-sm font-medium ${isActive
+      ? 'bg-stone-800 text-white shadow-sm'
+      : 'text-stone-500 hover:bg-stone-200 hover:text-stone-800'
     }`;
 
   return (
@@ -53,7 +54,7 @@ const Navigation = () => {
           </NavLink>
         </>
       )}
-      
+
       {isRecruiter && (
         <>
           <NavLink to="/recruiter/dashboard" className={({ isActive }) => navClass(isActive)}>
@@ -71,7 +72,7 @@ const Navigation = () => {
             <ShieldCheck size={16} /> System
           </NavLink>
           <NavLink to="/admin/fairness" className={({ isActive }) => navClass(isActive)}>
-             Bias Check
+            Bias Check
           </NavLink>
         </>
       )}
@@ -82,6 +83,7 @@ const Navigation = () => {
 const PortalSwitcher = () => {
   const location = useLocation();
   const isLanding = location.pathname === '/';
+  const isAuth = location.pathname === '/auth';
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -95,46 +97,45 @@ const PortalSwitcher = () => {
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
-  
-  if (isLanding) return null;
+
+  if (isLanding || isAuth) return null;
 
   return (
     <div className="fixed top-6 right-6 z-50 animate-fadeIn" ref={menuRef}>
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`bg-white border px-4 py-2 rounded-full shadow-sm text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-            isOpen 
-            ? 'border-stone-400 text-stone-900 ring-2 ring-stone-100' 
-            : 'border-stone-200 text-stone-600 hover:text-stone-900 hover:border-stone-300'
-        }`}
+        className={`bg-white border px-4 py-2 rounded-full shadow-sm text-sm font-medium transition-all duration-200 flex items-center gap-2 ${isOpen
+          ? 'border-stone-400 text-stone-900 ring-2 ring-stone-100'
+          : 'border-stone-200 text-stone-600 hover:text-stone-900 hover:border-stone-300'
+          }`}
       >
         Switch Portal
         <ChevronDown size={14} className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
-      
+
       {isOpen && (
         <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-stone-100 rounded-xl shadow-xl p-2 flex flex-col gap-1 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-          <NavLink 
-            to="/student/dashboard" 
+          <NavLink
+            to="/student/dashboard"
             className={({ isActive }) => `block px-4 py-2 text-sm rounded-lg transition-colors ${isActive ? 'bg-stone-100 text-stone-900 font-medium' : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'}`}
             onClick={() => setIsOpen(false)}
           >
             Student
           </NavLink>
-          <NavLink 
-            to="/recruiter/dashboard" 
+          <NavLink
+            to="/recruiter/dashboard"
             className={({ isActive }) => `block px-4 py-2 text-sm rounded-lg transition-colors ${isActive ? 'bg-stone-100 text-stone-900 font-medium' : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'}`}
             onClick={() => setIsOpen(false)}
           >
             Recruiter
           </NavLink>
-          <NavLink 
-            to="/admin/overview" 
+          <NavLink
+            to="/admin/overview"
             className={({ isActive }) => `block px-4 py-2 text-sm rounded-lg transition-colors ${isActive ? 'bg-stone-100 text-stone-900 font-medium' : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'}`}
             onClick={() => setIsOpen(false)}
           >
@@ -149,12 +150,13 @@ const PortalSwitcher = () => {
 const HomeLink = () => {
   const location = useLocation();
   const isLanding = location.pathname === '/';
-  
-  if (isLanding) return null;
+  const isAuth = location.pathname === '/auth';
+
+  if (isLanding || isAuth) return null;
 
   return (
-    <NavLink 
-      to="/" 
+    <NavLink
+      to="/"
       className="fixed top-6 left-6 z-50 bg-white border border-stone-200 px-4 py-2 rounded-full shadow-sm text-sm font-medium text-stone-600 hover:text-stone-900 transition-colors flex items-center gap-2 animate-fadeIn hover:shadow-md"
     >
       <Home size={16} className="text-stone-400" />
@@ -166,21 +168,24 @@ const HomeLink = () => {
 const AppContent = () => {
   const location = useLocation();
   const isLanding = location.pathname === '/';
+  const isAuth = location.pathname === '/auth';
 
   return (
-    <div className={`min-h-screen font-sans selection:bg-sage-200 selection:text-sage-800 ${isLanding ? 'bg-white overflow-x-hidden' : 'bg-stone-50'}`}>
+    <div className={`min-h-screen font-sans selection:bg-nature-leaf/30 selection:text-nature-forest ${isLanding ? 'bg-white' : isAuth ? 'bg-transparent' : 'bg-stone-50'} overflow-x-hidden`}>
       <HomeLink />
       <PortalSwitcher />
-      
+
       {/* 
           Layout Logic:
           - Landing Page: Full width (w-full), no extra padding, let the page handle its own layout.
+          - Auth Page: Managed by component.
           - App Pages: Constrained width (max-w-7xl) with standard padding.
       */}
-      <div className={isLanding ? "w-full" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 pt-6"}>
+      <div className={isLanding || isAuth ? "w-full" : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 pt-6"}>
         <Routes>
           <Route path="/" element={<Landing />} />
-          
+          <Route path="/auth" element={<AuthPage />} />
+
           {/* Student Routes */}
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/student/upload" element={<ResumeUpload />} />
@@ -201,7 +206,7 @@ const AppContent = () => {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
-      
+
       <Navigation />
     </div>
   );
